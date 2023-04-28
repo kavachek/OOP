@@ -47,24 +47,43 @@ class Curator(Employee):
         super().__init__(name, surname, email, age, tel, position, personal_data, rate, contract)
 
     @staticmethod
-    def sending_notifications(self, message, list_recipient: list):
-        for stud in list_recipient:
-            print(f'{message} для {stud.email}')
-
-    @staticmethod
     def create_event(name_event, participants, date):
         Curator.ALL_event.append([name_event, participants, date])
         return True
+
+
+def sending_notifications(message, list_recipient: list):
+    for stud in list_recipient:
+        print(f'{message} для {stud.email}')
+
+
 # print(Сurator.ALL_event[0]['name_event'])
 
 
 class Student(Member):
     ALL_student = []
+    Last_id = 0
 
     def __init__(self, name, surname, email, age, tel):
         super().__init__(name, surname, email, age, tel)
         self.knowledge = []
+        self.id = Student.Last_id
+        Student.Last_id += 1
+
         Student.ALL_student.append(self)
+
+    def dead(self):
+        print('Я удалился')
+        del self
+
+    def __del__(self):
+        print(f'Меня больше нет {self}')
+
+# i = 0
+# while i < 1000:
+#     Student()
+#     i += 1
+# print('Количество студентов:', len(Student.ALL_student))
 
     @staticmethod
     def get_all_students():
@@ -82,24 +101,37 @@ class Student(Member):
         return True
 
     def __str__(self):
-        return self.name + ' ' + self.surname + ' |'
+        return self.name + ' ' + self.surname
 
     def __repr__(self):
         full_name = path.basename(Path(__file__))
-        name_mobule = path.splitext(full_name)[0]
-        print(name_mobule)
-        return f'{name_mobule}.Student(\'{self.name}\', \'{self.surname}\', \'{self.age}\', \'{self.email}\')'
+        name_module = path.splitext(full_name)[0]
+        print(name_module)
+        return f'{name_module}.Student(\'{self.name}\', \'{self.surname}\', \'{self.age}\', \'{self.email}\')'
 
 
 class Teacher(Employee):
     ALL_teachers = []
+    Teacher_id = 0
 
     def __init__(self, name, surname, email, age, tel, position, personal_data,
                  rate, contract, skills):
         super().__init__(name, surname, email, age, tel, position, personal_data, rate, contract)
         self.rate = rate
         self.skills = skills
+        self.id = Teacher.Teacher_id
         Teacher.ALL_teachers.append(self)
+        Teacher.Teacher_id += 1
+
+    def dead(self):
+        print('Меня уволили')
+        del self
+
+    def __del__(self):
+        print(f'Меня больше нет {self}')
+
+    def __str__(self):
+        return self.name + ' ' + self.surname
 
     @staticmethod
     def get_all_teachers():
@@ -156,6 +188,7 @@ class Lesson(Discipline):
     ALL_lesson = []
 
     def __init__(self, lesson_name, list_themes):
+        self.themes = None
         self.lesson_name = lesson_name
         self.list_themes = list_themes
         Lesson.ALL_lesson.append(self)
@@ -177,6 +210,42 @@ class Lesson(Discipline):
         return Lesson.ALL_lesson
 
 
+class Test:
+    pass
+
+
+class Materials:
+    pass
+
+
+def add_test(test: "Test"):
+    Themes.ALL_themes.append(test)
+
+
+def get_all_themes():
+    return Themes.ALL_themes
+
+
+def del_test(test: "Test"):
+    Themes.ALL_themes.remove(test)
+
+
+def add_materials(materials: "Materials"):
+    Themes.ALL_Materials.append(materials)
+
+
+def del_materials(materials: "Materials"):
+    Themes.ALL_Materials.remove(materials)
+
+
+def get_all_test():
+    return Themes.ALL_Test
+
+
+def get_all_materials():
+    return Themes.ALL_Materials
+
+
 class Themes:
     ALL_themes = []
     ALL_Test = []
@@ -188,27 +257,6 @@ class Themes:
         Themes.ALL_themes.append(self)
         Themes.ALL_Materials.append(materials)
         Themes.ALL_Test.append(theme_name)
-
-    def get_all_themes(self):
-        return Themes.ALL_themes
-
-    def add_test(self, test: "Test"):
-        Themes.ALL_themes.append(test)
-
-    def del_test(self, test: "Test"):
-        Themes.ALL_themes.remove(test)
-
-    def add_materials(self, materials: "Materials"):
-        Themes.ALL_Materials.append(materials)
-
-    def del_materials(self, materials: "Materials"):
-        Themes.ALL_Materials.remove(materials)
-
-    def get_all_test(self):
-        return Themes.ALL_Test
-
-    def get_all_materials(self):
-        return Themes.ALL_Materials
 
     def __repr__(self):
         return self.theme_name
@@ -295,45 +343,46 @@ Stud_Sasha = Student('Саша', 'Сасашаша', 'Sasha@mail.ru', -1, '89169
 list_s = Student.ALL_student.copy()
 list_s.append(Teacher_Vladislav)
 
-for student in list_s:
-    print(Student.check_student(student))
+# for student in list_s:
+#     print(Student.check_student(student))
 
 # Список уроков
 Programming = Discipline("программирование", ["ооп"], [Teacher_Vladislav])
 Music = Discipline("музыка", ["ноты"], [Teacher_Alexey])
 
-Teacher_Vladislav.hold_lesson(Programming, [Stud_Dima, Stud_Anna])
-Teacher_Alexey.hold_lesson(Music, [Stud_Sasha, Stud_Vitya])
-Teacher_Alexey.hold_lesson(Programming, [Stud_Dima])
-Teacher.hold_lesson(Stud_Sasha, Programming, [Stud_Vitya])
+# Teacher_Vladislav.hold_lesson(Programming, [Stud_Dima, Stud_Anna])
+# Teacher_Alexey.hold_lesson(Music, [Stud_Sasha, Stud_Vitya])
+# Teacher_Alexey.hold_lesson(Programming, [Stud_Dima])
+# Teacher.hold_lesson(Stud_Sasha, Programming, [Stud_Vitya])
 
-# Кураторы
-Curator_Vitya = Curator('Витя', 'Витевский', 'vita@mail.ru', 18, '89169999999', 'Куратор', 'Личное информации нет',
-                        20000, 'ГПХ')
-
-# Сообщение
-message = 'Поздравляю всех с постулением!'
+# # Кураторы
+# Curator_Vitya = Curator('Витя', 'Витевский', 'vita@mail.ru', 18, '89169999999', 'Куратор', 'Личное информации нет',
+#                         20000, 'ГПХ')
+#
+# # Сообщение
+# message = 'Поздравляю всех с постулением!'
 
 
 # Список получателей
-list_email = []
-for students in Student.ALL_student:
-    list_email.append(students.email)
+# list_email = []
+# for students in Student.ALL_student:
+#     list_email.append(students.email)
+#
+# # Рассылка
+# sending_notifications(message = message, list_recipient = list_email)
+#
+# print('Ставим оценку:', Grade.grade_translation(48))
+#
+# One = Group(Curator_Vitya, [Stud_Dima, Stud_Sasha])
 
-# Рассылка
-Curator_Vitya.sending_notifications(message = message, list_recipient = list_email)
+# tem_1 = Themes('Вводное занятие', [1, 2, 3, 67, 0.9, 3])
+# tem_2 = Themes('Занятие_1', [5, 676, 2346, 8])
+# tem_3 = Themes('Занятие_2', [3, 456, 643, 2])
+#
+# Group.get_all_student_group(One)
+# Group.check_student_by_group(One, Stud_Sasha)
+# Group.check_student_by_group(One, Stud_Vitya)
+#
+# Les_1 = Lesson('Урок_1', [tem_2, tem_3, tem_1])
+# print(Les_1.list_themes)
 
-print('Ставим оценку:', Grade.grade_translation(48))
-
-One = Group(Curator_Vitya, [Stud_Dima, Stud_Sasha])
-
-tem_1 = Themes('Вводное занятие', [1, 2, 3, 67, 0.9, 3])
-tem_2 = Themes('Занятие_1', [5, 676, 2346, 8])
-tem_3 = Themes('Занятие_2', [3, 456, 643, 2])
-
-Group.get_all_student_group(One)
-Group.check_student_by_group(One, Stud_Sasha)
-Group.check_student_by_group(One, Stud_Vitya)
-
-Les_1 = Lesson('Урок_1', [tem_2, tem_3, tem_1])
-print(Les_1.list_themes)
